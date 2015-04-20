@@ -17,7 +17,7 @@ class AccountsType(models.Model):
 
 
 class Account(models.Model):
-    user = models.OneToOneField(User)
+    user = models.ForeignKey(User)
     type = models.ForeignKey('AccountsType', to_field='type')
     balance = models.FloatField(null=False, blank=False)
 
