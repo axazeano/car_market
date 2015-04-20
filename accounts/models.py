@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 
 
 class AccountsType(models.Model):
-    type = models.CharField(max_length=1, null=False, blank=False, unique=True)
+    type = models.CharField(max_length=1, null=False, blank=False, unique=True, primary_key=True)
     description = models.CharField(max_length=100, null=True, blank=True)
 
     def __unicode__(self):
