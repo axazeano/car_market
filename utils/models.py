@@ -1,5 +1,10 @@
 from django.db import models
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 from accounts.models import Account
+
 
 """
  All models must have __unicode__() method for properly representation!
@@ -46,13 +51,6 @@ class Warehouse(models.Model):
     free = models.IntegerField(null=False, blank=False)
     owner = models.ForeignKey(Account)
 
-    # def save(self, *args, **kwargs):
-    #     """
-    #     Custom save method. Set free = size before save new instance.
-    #     """
-    #     self.free = self.size
-    #     super(Warehouse, self).save(*args, **kwargs)
-
     def __unicode__(self):
         return ' '.join(['account:', str(self.owner.id),
                          'size:', str(self.size), 'free:' + str(self.free)])
@@ -72,13 +70,14 @@ class WarehouseItem(models.Model):
     warehouse = models.ForeignKey('Warehouse')
     item = models.ForeignKey('Part')
     count = models.IntegerField(null=False, blank=False, default=1)
+    # incoming_count isn't a DB Field! Using for change size of free space in a warehouse.
+    incoming_count = 0
 
     def __unicode__(self):
         return ' '.join(['warehouse_id:', unicode(self.warehouse_id), 'item:',
                          self.item.__unicode__(), 'count:', str(self.count)])
 
     def save(self, *args, **kwargs):
-        # TODO this is bad idea. Should be separated for two or more methods
         """
         Custom save method. Check count of added items.
         If it > free spaces on a warehouse - exception raises.
@@ -90,32 +89,12 @@ class WarehouseItem(models.Model):
         else:
             try:
                 exist_item = WarehouseItem.objects.get(item=self.item)
+                exist_item.incoming_count = self.count
                 exist_item.count += self.count
-                self.warehouse.free -= self.count
                 super(WarehouseItem, exist_item).save(*args, **kwargs)
-                super(Warehouse, self.warehouse).save(*args, **kwargs)
-                # self.warehouse.save()
             except models.ObjectDoesNotExist:
-                self.warehouse.free -= self.count
-                # self.warehouse.save()
-                super(Warehouse, self.warehouse).save(*args, **kwargs)
+                self.incoming_count = self.count
                 super(WarehouseItem, self).save(*args, **kwargs)
-
-        # if self.count > self.warehouse.free:
-        #     raise Exception('Not enough space in warehouse')
-        # else:
-        #     try:
-        #         exist_item = WarehouseItem.objects.filter(warehouse=self.warehouse_id, item=self.item_id)
-        #
-        #         exist_item.update(count=exist_item.count() + self.count)
-        #
-        #         self.warehouse.free -= self.count
-        #         self.warehouse.save()
-        #     except WarehouseItem.DoesNotExist:
-        #         super(WarehouseItem, self).save(*args, **kwargs)
-        #
-        #         self.warehouse.free -= self.count
-        #         self.warehouse.save()
 
 
 class PartType(models.Model):
@@ -134,3 +113,16 @@ class Part(models.Model):
 
     def __unicode__(self):
         return self.type.type + ' ' + self.name
+
+
+@receiver(post_save, sender=WarehouseItem)
+def hold_warehouse_space(instance, **kwargs):
+    """
+    Change size of free space in a warehouse.
+    :param instance: WarehouseItem object
+    :param kwargs: Doesn't use
+    :return:
+    """
+    warehouse = instance.warehouse
+    warehouse.free -= instance.incoming_count
+    warehouse.save()
