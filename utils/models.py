@@ -1,6 +1,6 @@
 from django.db import models
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from accounts.models import Account
@@ -125,4 +125,17 @@ def hold_warehouse_space(instance, **kwargs):
     """
     warehouse = instance.warehouse
     warehouse.free -= instance.incoming_count
+    warehouse.save()
+
+
+@receiver(post_delete, sender=WarehouseItem)
+def release_warehouse_space(instance, **kwargs):
+    """
+    Change size of free space after delete WarehouseItem .
+    :param instance: WarehouseItem object
+    :param kwargs: Doesn't use
+    :return:
+    """
+    warehouse = instance.warehouse
+    warehouse.free += instance.count
     warehouse.save()
