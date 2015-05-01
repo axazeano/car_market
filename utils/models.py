@@ -46,12 +46,12 @@ class Warehouse(models.Model):
     free = models.IntegerField(null=False, blank=False)
     owner = models.ForeignKey(Account)
 
-    def save(self, *args, **kwargs):
-        """
-        Custom save method. Set free = size before save new instance.
-        """
-        self.free = self.size
-        super(Warehouse, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     """
+    #     Custom save method. Set free = size before save new instance.
+    #     """
+    #     self.free = self.size
+    #     super(Warehouse, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return ' '.join(['account:', str(self.owner.id),
@@ -89,17 +89,34 @@ class WarehouseItem(models.Model):
             raise Exception('Not enough space in warehouse')
         else:
             try:
-                exist_item = WarehouseItem.objects.filter(warehouse=self.warehouse_id, item=self.item_id)
-
-                exist_item.update(count=exist_item.count() + self.count)
-
+                exist_item = WarehouseItem.objects.get(item=self.item)
+                exist_item.count += self.count
                 self.warehouse.free -= self.count
-                self.warehouse.save()
-            except WarehouseItem.DoesNotExist:
+                super(WarehouseItem, exist_item).save(*args, **kwargs)
+                super(Warehouse, self.warehouse).save(*args, **kwargs)
+                # self.warehouse.save()
+            except models.ObjectDoesNotExist:
+                self.warehouse.free -= self.count
+                # self.warehouse.save()
+                super(Warehouse, self.warehouse).save(*args, **kwargs)
                 super(WarehouseItem, self).save(*args, **kwargs)
 
-                self.warehouse.free -= self.count
-                self.warehouse.save()
+        # if self.count > self.warehouse.free:
+        #     raise Exception('Not enough space in warehouse')
+        # else:
+        #     try:
+        #         exist_item = WarehouseItem.objects.filter(warehouse=self.warehouse_id, item=self.item_id)
+        #
+        #         exist_item.update(count=exist_item.count() + self.count)
+        #
+        #         self.warehouse.free -= self.count
+        #         self.warehouse.save()
+        #     except WarehouseItem.DoesNotExist:
+        #         super(WarehouseItem, self).save(*args, **kwargs)
+        #
+        #         self.warehouse.free -= self.count
+        #         self.warehouse.save()
+
 
 class PartType(models.Model):
     type = models.CharField(max_length=120, null=False, blank=False, unique=True)
@@ -111,7 +128,7 @@ class PartType(models.Model):
 
 class Part(models.Model):
     type = models.ForeignKey('PartType')
-    car_compability = models.ManyToManyField('CarsModel')
+    car_compatibility = models.ManyToManyField('CarsModel')
     name = models.CharField(max_length=120, null=False, blank=False)
     description = models.TextField(null=True, blank=True, default='')
 
