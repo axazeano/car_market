@@ -120,7 +120,7 @@ def hold_warehouse_space(instance, **kwargs):
     """
     Change size of free space in a warehouse.
     :param instance: WarehouseItem object
-    :param kwargs: Doesn't use
+    :param kwargs: Don't using
     :return:
     """
     warehouse = instance.warehouse
@@ -133,7 +133,7 @@ def release_warehouse_space(instance, **kwargs):
     """
     Change size of free space after delete WarehouseItem .
     :param instance: WarehouseItem object
-    :param kwargs: Doesn't use
+    :param kwargs: Don't using
     :return:
     """
     warehouse = instance.warehouse
