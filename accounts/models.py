@@ -20,6 +20,7 @@ class Account(models.Model):
     user = models.ForeignKey(User)
     type = models.ForeignKey('AccountsType', to_field='type')
     balance = models.FloatField(null=False, blank=False)
+    is_fully_created = models.BooleanField(null=False, blank=False, default=False)
 
     def __unicode__(self):
         return self.user.get_full_name() + ' ' + self.type.__unicode__()
