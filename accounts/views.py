@@ -1,8 +1,21 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from .forms import Login
+from django.http import HttpResponseRedirect
+
+from django.views.generic import FormView
+from django.contrib.auth import (
+    login as auth_login, authenticate)
+
+from .forms import UserCreateForm
 
 
-def login(request):
-    form = Login()
-    return render(request, 'accounts/login.html', {'form': form})
+class AccountRegistrationView(FormView):
+    template_name = 'accounts/registration.html'
+    form_class = UserCreateForm
+    success_url = '/'
+
+    def form_valid(self, form):
+        saved_user = form.save()
+        user = authenticate(
+            username=saved_user.username,
+            password=form.cleaned_data['password1'])
+        auth_login(self.request, user)
+        return HttpResponseRedirect(self.get_success_url())
