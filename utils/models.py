@@ -130,6 +130,36 @@ class Message(models.Model):
         self.save()
 
 
+class Order(models.Model):
+    """
+    Model for orders
+    """
+    sender = models.ForeignKey(Account, null=False, blank=False, related_name='order_sender')
+    to = models.ForeignKey(Account, null=False, blank=False, related_name='order_to')
+    part = models.ForeignKey(Part)
+    count = models.IntegerField()
+    cost = models.FloatField()
+    additional_cost = models.FloatField(null=True, blank=True)
+    # additional_cost_type = models.ForeignKey(AdditionalCostType)
+    # status = models.ForeignKey(OrderStatus)
+
+
+class OrderStatus(models.Model):
+    """
+    Order statuses
+    For example: Pending, Working for delivery, Cancel, Done e.t.c.
+    """
+    status = models.CharField(max_length=20, blank=False, null=False)
+    description = models.CharField(max_length=100, default='')
+
+
+class AdditionalCostType(models.Model):
+    """
+    Additional Cost types
+    For example: overhead cost, extra charge e.t.c.
+    """
+    type = models.CharField(max_length=20, blank=False, null=False)
+    description = models.CharField(max_length=100, default='')
 
 
 @receiver(post_save, sender=WarehouseItem)
