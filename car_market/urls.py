@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 from accounts.views import AccountRegistrationView, LoginView, logout, dashboard_view
+from utils.views import IndexView
 
 
 urlpatterns = [
@@ -14,5 +15,8 @@ urlpatterns = [
     url(r'^accounts/register/$', AccountRegistrationView.as_view(), name='register'),
     url(r'^accounts/login/$', LoginView.as_view(), name='login'),
     url(r'^accounts/dashboard/$', dashboard_view, name='dashboard'),
-    url(r'^accounts/logout/$', logout, name='logout')
+    url(r'^accounts/logout/$', logout, name='logout'),
+    url(r'^$', IndexView.as_view(), name='index'),
+
+    url(r'^admin_tools/', include('admin_tools.urls')),
 ]
