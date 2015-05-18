@@ -1,7 +1,7 @@
 from django.db import models
-
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.utils.timezone import now
 
 from accounts.models import Account
 
@@ -113,6 +113,23 @@ class Part(models.Model):
 
     def __unicode__(self):
         return self.type.type + ' ' + self.name
+
+
+class Message(models.Model):
+    """
+    Models for messages
+    """
+    sender = models.ForeignKey(Account, null=False, blank=False, related_name='message_sender')
+    to = models.ForeignKey(Account, null=False, blank=False, related_name='message_to')
+    body = models.TextField()
+    time = models.DateTimeField(now())
+    is_unread = models.BooleanField(default=True)
+
+    def set_read(self):
+        self.is_unread = False
+        self.save()
+
+
 
 
 @receiver(post_save, sender=WarehouseItem)
