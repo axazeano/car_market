@@ -24,3 +24,7 @@ class Account(models.Model):
 
     def __unicode__(self):
         return self.user.get_full_name() + ' ' + self.type.__unicode__()
+
+
+def all_accounts_of_user(user):
+    return Account.objects.filter(user=user)
