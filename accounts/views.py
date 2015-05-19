@@ -40,6 +40,9 @@ class LoginView(FormView):
 def dashboard_view(request):
     context = {'user': request.user,
                'accounts': all_accounts_of_user(request.user)}
+    from django.conf import settings
+
+    print(settings.BASE_DIR)
     return render(request, 'accounts/dashboard.html', context)
 
 
