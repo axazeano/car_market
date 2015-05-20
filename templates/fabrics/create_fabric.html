@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <form class="form-contact col-md-6" role="form" method="post">
+                {% csrf_token %}
+                <h2>Create new fabric</h2>
+
+                <div class="form-group">
+                    <label for="id_name">Fabric name</label>
+                    <input class="form-control"
+                           placeholder="Enter name" id="id_name" name="id_name">
+                </div>
+                <div class="form-group">
+                    <label for="id_country">Select your location</label>
+                    <select class="form-control" id="id_country" name="id_country">
+                        <option selected disabled>Select your country</option>
+                        {% for country in countries %}
+                            <option>{{ country }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="id_warehouse_size">Size of your warehouse</label>
+                    <input class="form-control"
+                           placeholder="Warehouse size" id="id_warehouse_size" name="id_warehouse_siz">
+                </div>
+                <div class="form-group">
+                    <label for="id_workers_count">How many workers in your company</label>
+                    <input class="form-control"
+                           placeholder="Warehouse size" id="id_workers_count" name="id_workers_count">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-lg btn-primary btn-block"
+                            type="submit">Create
+                    </button>
+                </div>
+
+            </form>
+            <div class="col-md-4 col-md-offset-2">
+                <h2>We help you to create new fabric!</h2>
+                We provide you
+            </div>
+        </div>
+    </div>
+{% endblock %}
