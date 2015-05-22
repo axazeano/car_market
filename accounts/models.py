@@ -12,6 +12,7 @@ class AccountsType(models.Model):
     type = models.CharField(max_length=1, null=False, blank=False, unique=True, primary_key=True)
     description = models.CharField(max_length=100, null=True, blank=True)
 
+
     def __unicode__(self):
         return self.type + ' (' + self.description + ')'
 
@@ -24,6 +25,10 @@ class Account(models.Model):
 
     def __unicode__(self):
         return self.user.get_full_name() + ' ' + self.type.__unicode__() + ' #' + str(self.pk)
+
+    @staticmethod
+    def get_all_accounts_of_user(user):
+        return Account.objects.filter(user=user)
 
 
 class Worker(models.Model):
@@ -41,7 +46,3 @@ class Worker(models.Model):
                             salary=salary,
                             is_active=is_active)
             worker.save()
-
-
-def all_accounts_of_user(user):
-    return Account.objects.filter(user=user)
