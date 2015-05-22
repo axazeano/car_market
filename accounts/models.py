@@ -23,7 +23,24 @@ class Account(models.Model):
     is_fully_created = models.BooleanField(null=False, blank=False, default=False)
 
     def __unicode__(self):
-        return self.user.get_full_name() + ' ' + self.type.__unicode__()
+        return self.user.get_full_name() + ' ' + self.type.__unicode__() + ' #' + str(self.pk)
+
+
+class Worker(models.Model):
+    name = models.CharField(max_length=120, default='')
+    surname = models.CharField(max_length=200, default='')
+    salary = models.FloatField(default=0, null=False, blank=False)
+    is_active = models.BooleanField(default=True, null=False, blank=False)
+    department = models.CharField(max_length=120, default='')
+    owner = models.ForeignKey(Account)
+
+    @staticmethod
+    def create_many_workers(account, count, salary=0, is_active=True):
+        for x in xrange(count):
+            worker = Worker(owner=account,
+                            salary=salary,
+                            is_active=is_active)
+            worker.save()
 
 
 def all_accounts_of_user(user):
