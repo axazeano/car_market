@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'utils',
     'customers',
     'fabrics',
+    'user_messages',
 )
 
 MIDDLEWARE_CLASSES = (
