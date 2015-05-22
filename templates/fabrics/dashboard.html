@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>{{ fabric.name }} dashboard</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-header">
+                        <h4 class="text-center">Production</h4>
+                    </div>
+                    <ul class="list-group list-group-flush text-center">
+                        <li class="list-group-item">In production: 14 items</li>
+                        <li class="list-group-item">Get production report</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-header">
+                        <h4 class="text-center">Message center</h4>
+                    </div>
+                    <div class="list-group list-group-flush text-center">
+                        <a href="#" class="list-group-item">
+                            <span class="badge">{{ new_messages_count }}</span>
+                            Messages
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <span class="badge">14</span>
+                            Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

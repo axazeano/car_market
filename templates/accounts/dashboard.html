@@ -3,7 +3,7 @@
 hi {{ user }}!
 
 {% block content %}
-<a href="{% url 'logout' %}">Logout</a>
+<a href="{% url 'accounts:logout' %}">Logout</a>
     <a href="#">Add new account</a>
 
 
@@ -13,6 +13,6 @@ hi {{ user }}!
 
     <a href="#">Be a client</a>
     <a href="#">Be a dealer</a>
-    <a href="#">Open your fabric!</a>
+    <a href="{% url 'fabrics:create' %}">Open your fabric!</a>
     <a href="#">Open your shop!</a>
 {% endblock %}
