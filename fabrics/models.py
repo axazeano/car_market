@@ -1,14 +1,11 @@
 from django.db import models
 
-from accounts.models import Account
+from accounts.models import AbstractAccount
 from utils.models import Country
 
-
-class Fabric(models.Model):
-    name = models.CharField(max_length=120, null=False, blank=False, unique=True)
-    owner = models.OneToOneField(Account)
-    balance = models.FloatField(null=False, blank=False, default=500000)
-    country = models.ForeignKey(Country, null=True, blank=True)
+class Fabric(AbstractAccount):
+    best = models.BooleanField(default=False, null=False, blank=False)
+    is_moneyback = models.BooleanField(default=False, null=False, blank=False)
 
 
 
