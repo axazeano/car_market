@@ -1,30 +1,10 @@
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
-from accounts.models import Account
+from accounts.models import AbstractAccount
 from utils.models import CarsModel
 
 
-class Customer(models.Model):
-    account = models.ForeignKey(Account)
+class Customer(AbstractAccount):
     cars = models.ManyToManyField(CarsModel, blank=True, default=None)
 
     def __unicode__(self):
         return 'Customer: ' + self.account.user.get_full_name()
-
-    def save(self):
-        if self.account.type.type != 'C':
-            raise Exception("Account with type {} can't be a customer".format(self.account.type.type))
-        else:
-            super(Customer, self).save()
-
-
-@receiver(post_save, sender=Account)
-def create_customer_for_account(instance, **kwargs):
-    account = instance
-    if account.is_fully_created is False:
-        if account.type.pk == u'C':
-            account.is_fully_created = True
-            customer = Customer(account=account)
-            customer.save()
