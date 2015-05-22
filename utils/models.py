@@ -3,8 +3,8 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils.timezone import now
 
-from accounts.models import Account
-
+#from accounts.models import Account
+from django.contrib.auth.models import User
 
 """
  All models must have __unicode__() method for properly representation!
@@ -49,7 +49,7 @@ class Warehouse(models.Model):
      """
     size = models.IntegerField(null=False, blank=False, default=100)
     free = models.IntegerField(null=False, blank=False)
-    owner = models.ForeignKey(Account)
+    owner = models.ForeignKey(User)
 
     def __unicode__(self):
         return ' '.join(['account:', str(self.owner.id),
@@ -113,35 +113,6 @@ class Part(models.Model):
 
     def __unicode__(self):
         return self.type.type + ' ' + self.name
-
-
-class Message(models.Model):
-    """
-    Models for messages
-    """
-    sender = models.ForeignKey(Account, null=False, blank=False, related_name='message_sender')
-    to = models.ForeignKey(Account, null=False, blank=False, related_name='message_to')
-    body = models.TextField()
-    time = models.DateTimeField(now())
-    is_unread = models.BooleanField(default=True)
-
-    def set_read(self):
-        self.is_unread = False
-        self.save()
-
-
-class Order(models.Model):
-    """
-    Model for orders
-    """
-    sender = models.ForeignKey(Account, null=False, blank=False, related_name='order_sender')
-    to = models.ForeignKey(Account, null=False, blank=False, related_name='order_to')
-    part = models.ForeignKey(Part)
-    count = models.IntegerField()
-    cost = models.FloatField()
-    additional_cost = models.FloatField(null=True, blank=True)
-    # additional_cost_type = models.ForeignKey(AdditionalCostType)
-    # status = models.ForeignKey(OrderStatus)
 
 
 class OrderStatus(models.Model):
